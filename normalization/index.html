@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#f8fafc" id="themeColorMeta">
+  <title>DBMS Normalization Mastery Portal | Closures, 1NF, 2NF & 3NF (60 Problems)</title>
+  <meta name="description" content="Interactive database normalization practice platform. 60 categorized questions covering attribute closures, candidate keys, 1NF atomicity, 2NF partial dependencies, and 3NF transitive dependencies.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><ellipse cx='12' cy='5' rx='9' ry='3'/><path d='M21 12c0 1.66-4 3-9 3s-9-1.34-9-3'/><path d='M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5'/></svg>">
+</head>
+<body>
+
+  <!-- Accessible Skip Link -->
+  <a href="#questionsList" class="skip-link">Skip to questions</a>
+
+  <!-- Sticky Header -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo-area" aria-label="DBMS Normalizer Home">
+        <div class="logo-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <div class="logo-text">
+          <h1>DBMS Normalizer</h1>
+          <p>60 Practice Problems &amp; Full Solution Manual</p>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <button id="btnChecklist" class="btn" aria-label="Open Quick Revision Cheat Sheet" title="Open Quick Revision Cheat Sheet">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>Cheat Sheet</span>
+        </button>
+
+        <button id="btnToggleMode" class="btn" aria-label="Toggle reveal all solutions" title="Toggle Show/Hide All Solutions">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <span id="modeText">Reveal All</span>
+        </button>
+
+        <button id="btnPrint" class="btn btn-icon-only" aria-label="Print worksheet or export PDF" title="Print Worksheet / Export PDF">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        </button>
+
+        <button id="btnThemeToggle" class="btn btn-icon-only" aria-label="Toggle light and dark theme" title="Toggle Light/Dark Theme">
+          <svg id="themeIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="hero-banner">
+    <div class="hero-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      <span>20 / 20 / 20 Balanced Academic Curriculum</span>
+    </div>
+    <h2 class="hero-title">Database Normalization Mastery</h2>
+    <p class="hero-subtitle">
+      Master database design through 60 meticulously structured problems. Compute attribute closures, discover candidate keys, eliminate partial dependencies (2NF), and remove transitive dependencies (3NF).
+    </p>
+
+    <!-- Progress Tracker Card -->
+    <div class="progress-card">
+      <div class="progress-header">
+        <span class="progress-title">Mastery Progress</span>
+        <div class="progress-right">
+          <span id="progressStats">0 of 60 Solved (0%)</span>
+          <button id="btnResetProgress" class="btn-reset-progress" aria-label="Reset all solved progress" title="Reset your practice progress">Reset</button>
+        </div>
+      </div>
+      <div class="progress-bar-bg" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div id="progressBar" class="progress-bar-fill" style="width: 0%;"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter & Controls Section -->
+  <section class="controls-bar" aria-label="Search and Filters">
+    <div class="search-row">
+      <div class="search-box">
+        <svg class="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search schemas, attributes, keywords (e.g., closure, 2NF)..." aria-label="Search problems">
+        <kbd class="search-kbd" title="Press '/' anywhere to search">/</kbd>
+        <button id="searchClear" class="search-clear" aria-label="Clear Search" title="Clear Search">&times;</button>
+      </div>
+
+      <div class="filter-group">
+        <select id="diffFilter" class="select-filter" aria-label="Filter by difficulty" title="Filter by difficulty">
+          <option value="all">All Difficulties</option>
+          <option value="Easy">Easy (Fundamentals)</option>
+          <option value="Medium">Medium (Multi-Tier)</option>
+          <option value="Hard">Hard (Enterprise &amp; Deep-Dive)</option>
+        </select>
+        
+        <select id="statusFilter" class="select-filter" aria-label="Filter by solved status" title="Filter by status">
+          <option value="all">All Statuses</option>
+          <option value="unsolved">To Practice</option>
+          <option value="mastered">Mastered Only</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="category-tabs" id="categoryTabs">
+      <button class="tab-btn active" data-category="all" aria-label="Show all 60 problems">
+        <span>All Problems</span>
+        <span class="tab-count" id="countAll">60</span>
+      </button>
+      <button class="tab-btn" data-category="closures-keys" aria-label="Category 1: Closures and Keys">
+        <span class="tab-label-full">1. Closures &amp; Keys</span>
+        <span class="tab-label-short">1. Closures</span>
+        <span class="tab-count" id="countClosures">20</span>
+      </button>
+      <button class="tab-btn" data-category="1nf-2nf" aria-label="Category 2: 1NF and 2NF Normalization">
+        <span class="tab-label-full">2. 1NF &amp; 2NF Normalization</span>
+        <span class="tab-label-short">2. 1NF &amp; 2NF</span>
+        <span class="tab-count" id="count1nf2nf">20</span>
+      </button>
+      <button class="tab-btn" data-category="3nf" aria-label="Category 3: 3NF Normalization">
+        <span class="tab-label-full">3. 3NF Normalization</span>
+        <span class="tab-label-short">3. 3NF Normal</span>
+        <span class="tab-count" id="count3nf">20</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- Main Question Content Feed -->
+  <main>
+    <div class="results-meta">
+      <span id="resultsCount">Showing 60 problems</span>
+      <span id="activeFilterBadge">Category: All</span>
+    </div>
+
+    <div class="questions-list" id="questionsList">
+      <!-- Dynamic Question Cards populated by app.js -->
+    </div>
+
+    <!-- Empty State -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <h3>No matching problems found</h3>
+      <p>Try clearing your search term or adjusting your category and difficulty filters.</p>
+    </div>
+  </main>
+
+  <!-- Quick Revision Cheat Sheet Modal -->
+  <div id="checklistModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Quick Revision — Normalization Reference</h2>
+        <button id="modalClose" class="modal-close-btn">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- 6 Step Checklist -->
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: #60a5fa;">6-Step Normalization Checklist</h3>
+        <div class="checklist-grid">
+          <div class="check-card">
+            <div class="check-card-num">Step 1</div>
+            <div class="check-card-title">Atomicity (1NF)</div>
+            <div class="check-card-desc">Ensure each column domain contains indivisible scalar values. Eliminate repeating groups and nested tables by unnesting rows and establishing composite keys.</div>
+          </div>
+          <div class="check-card">
+            <div class="check-card-num">Step 2</div>
+            <div class="check-card-title">Candidate Keys</div>
+            <div class="check-card-desc">Compute attribute closures (X+) starting with non-RHS essential attributes. Find minimal superkeys whose closure spans all attributes in R.</div>
+          </div>
+          <div class="check-card">
+            <div class="check-card-num">Step 3</div>
+            <div class="check-card-title">Eliminate Partials (2NF)</div>
+            <div class="check-card-desc">No non-prime attribute may functionally depend on a strict proper subset of any candidate key (X ⊂ CK). Isolate partial FDs into separate relations.</div>
+          </div>
+          <div class="check-card">
+            <div class="check-card-num">Step 4</div>
+            <div class="check-card-title">Eliminate Transitives (3NF)</div>
+            <div class="check-card-desc">For every non-trivial X → Y, either X must be a Superkey OR Y must be Prime. Remove transitive dependencies (non-key → non-key) into master tables.</div>
+          </div>
+          <div class="check-card">
+            <div class="check-card-num">Step 5</div>
+            <div class="check-card-title">Foreign Key Integrity</div>
+            <div class="check-card-desc">Explicitly define Primary Keys (PK) and Foreign Keys (FK) linking child transaction tables back to parent entity tables.</div>
+          </div>
+          <div class="check-card">
+            <div class="check-card-num">Step 6</div>
+            <div class="check-card-title">Lossless &amp; Preservation</div>
+            <div class="check-card-desc">Verify that R1 ∩ R2 forms a superkey of R1 or R2 (Lossless Join) and that the union of local FDs preserves the full closure F+.</div>
+          </div>
+        </div>
+
+        <!-- Normal Form Comparison Matrix Table -->
+        <h3 style="font-family: var(--font-heading); font-size: 1.15rem; color: #60a5fa; margin-top: 1rem;">Normal Form Comparison Matrix</h3>
+        <div class="solution-table-wrapper">
+          <table class="solution-table">
+            <thead>
+              <tr>
+                <th>Normal Form</th>
+                <th>Core Requirement</th>
+                <th>Allowed Dependencies</th>
+                <th>Violation Trigger</th>
+                <th>Decomposition Strategy</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>1NF</strong></td>
+                <td>Atomic domains only</td>
+                <td>Any functional dependency</td>
+                <td>Repeating groups, comma lists, non-atomic attributes</td>
+                <td>Flatten tuples; form composite key</td>
+              </tr>
+              <tr>
+                <td><strong>2NF</strong></td>
+                <td>1NF + No partial dependencies</td>
+                <td>Full functional dependencies on candidate key</td>
+                <td>Proper subset of CK determines non-prime attribute (X ⊂ CK → Y)</td>
+                <td>Decompose into R1(X, Y) [PK: X] and R2(R - Y) [PK: CK]</td>
+              </tr>
+              <tr>
+                <td><strong>3NF</strong></td>
+                <td>2NF + No transitive dependencies</td>
+                <td>X is Superkey OR Y is Prime attribute</td>
+                <td>Non-key attribute determines non-key attribute (X → Y where X ≠ SK, Y ≠ prime)</td>
+                <td>Extract R1(X, Y) with X as PK; retain X as FK in parent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="#categoryTabs" onclick="window.filterCategory('closures-keys')">Closures &amp; Keys (Q1–Q20)</a>
+        <a href="#categoryTabs" onclick="window.filterCategory('1nf-2nf')">1NF &amp; 2NF (Q21–Q40)</a>
+        <a href="#categoryTabs" onclick="window.filterCategory('3nf')">3NF Normalization (Q41–Q60)</a>
+        <a href="#" id="footerChecklistLink">Revision Checklist</a>
+      </div>
+      <p>Interactive DBMS Normalization Portal • Ready for Free Vercel / GitHub Pages Hosting</p>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

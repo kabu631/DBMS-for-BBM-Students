@@ -1,0 +1,16 @@
+# System & IDE files
+.agents/
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Python cache & scratch scripts
+__pycache__/
+*.pyc
+generate_word_document.py
+format_template_backup.docx
+
+# Local logs
+*.log

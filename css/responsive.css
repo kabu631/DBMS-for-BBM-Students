@@ -1,0 +1,503 @@
+/* ==========================================================================
+   DBMS Course — Responsive Layer
+   --------------------------------------------------------------------------
+   Loaded LAST (after style.css and learn.css) so it is the single place that
+   decides how the app adapts to tablets and phones.
+
+   Breakpoints
+     ≤ 1200px  playground stacks (handled in style.css)
+     ≤  900px  sidebar becomes a slide-in drawer, comfortable touch sizing
+     ≤  640px  phone layout: compact topbar, tighter padding, stacked grids
+     ≤  380px  very small phones (iPhone SE / 320px class)
+
+   Root cause this file fixes: .main-wrapper is a flex child, and flex children
+   default to min-width:auto, so ONE wide table / <pre> / diagram stretched the
+   whole page past the screen. Everything below starts from "min-width: 0".
+   ========================================================================== */
+
+/* --- 1. Foundation: nothing may push the page wider than the screen ------- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+.app-container,
+.main-wrapper,
+.content-area,
+.topic-card,
+.topics-container { min-width: 0; max-width: 100%; }
+
+/* Grid/flex children must be allowed to shrink below their content width */
+.grid-2col > *, .grid-3col > *, .grid-4col > *,
+.compare-grid > *, .plan-grid > *, .glossary-grid > *,
+.img-grid-2col > *, .img-grid-3col > *, .unit-cards-grid > *,
+.books-grid > *, .unit-meta > * { min-width: 0; }
+
+img, video, canvas { max-width: 100%; height: auto; }
+
+/* Long identifiers / URLs / SQL words wrap instead of forcing sideways scroll */
+.topic-card p, .topic-card li, .topic-card h2, .topic-card h3, .topic-card h4,
+.learn-box, .worked-example, .we-question, .we-answer, .qa-answer, .quiz-q-text,
+.quiz-feedback, .feature-card, .compare-card, .definition-box, .unit-intro-card,
+.unit-banner, .glossary-card, .plan-card, .figure-caption { overflow-wrap: break-word; word-break: normal; }
+.topic-card code:not(pre code), .learn-box code, .qa-answer code, .we-answer code,
+.we-question code, .syllabus-table code { overflow-wrap: anywhere; }
+
+/* Code blocks scroll inside themselves, never widen the page */
+pre { max-width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.code-block { max-width: 100%; }
+.code-block .code-content { -webkit-overflow-scrolling: touch; }
+
+/* Any scrollable region gets momentum scrolling and contained overscroll */
+.table-responsive, .svg-figure, .code-content, .results-table-container {
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
+}
+
+/* Sticky topbar must not cover the heading a search result scrolls to */
+.topic-card, .unit-intro-card, .exam-corner, .quiz-block { scroll-margin-top: calc(var(--header-height) + 12px); }
+
+/* Buttons that are <a> links must not be underlined */
+a.btn-primary, a.btn-outline { text-decoration: none; }
+
+/* Topbar & sidebar text never wraps into 2-line fragments (was visible on desktop too):
+   the breadcrumb takes the leftover space and truncates with an ellipsis instead. */
+.topbar-left { flex: 1 1 auto; min-width: 0; }
+.topbar-right { flex: none; }
+.breadcrumb { min-width: 0; white-space: nowrap; }
+.breadcrumb > span { flex: none; }
+.breadcrumb > .breadcrumb-current { flex: 0 1 auto; min-width: 0; max-width: none; display: block; overflow: hidden; text-overflow: ellipsis; }
+.btn-primary { white-space: nowrap; }
+.nav-badge { white-space: nowrap; flex: none; }
+.nav-link-left { min-width: 0; }
+
+/* --- 2. Scroll hints: fade the edge that has more content ----------------- */
+/* app.js sets data-scroll="none|start|middle|end" on scrollable regions.     */
+.table-responsive[data-scroll="start"],
+.svg-figure[data-scroll="start"],
+.results-table-container[data-scroll="start"],
+.code-content[data-scroll="start"] {
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+          mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+.table-responsive[data-scroll="end"],
+.svg-figure[data-scroll="end"],
+.results-table-container[data-scroll="end"],
+.code-content[data-scroll="end"] {
+  -webkit-mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+          mask-image: linear-gradient(to left, #000 calc(100% - 28px), transparent);
+}
+.table-responsive[data-scroll="middle"],
+.svg-figure[data-scroll="middle"],
+.results-table-container[data-scroll="middle"],
+.code-content[data-scroll="middle"] {
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+          mask-image: linear-gradient(to right, transparent, #000 28px, #000 calc(100% - 28px), transparent);
+}
+
+/* Collapsible syllabus paragraph (phones only; app.js adds the toggle button) */
+.desc-toggle { display: none; }
+.scroll-hint {
+  display: none;
+  margin: -14px 0 16px;
+  text-align: center;
+  font-size: 0.74rem;
+  color: var(--text-muted);
+  letter-spacing: 0.02em;
+}
+.scroll-hint.is-needed { display: block; }
+
+/* --- 2b. SQL Playground ---------------------------------------------------- */
+/* style.css hides .schema-panel / .playground-main below 1200px, expecting a
+   tab bar that the current markup no longer renders — so on every phone and
+   tablet the editor and results were simply invisible. Show them again.      */
+@media (max-width: 1200px) {
+  .schema-panel, .playground-main { display: flex; }
+  .w3-ref-panel { display: flex; position: static; max-height: none; }
+  .playground-mobile-tabs { display: none; }
+}
+@media (max-width: 1024px) {
+  .playground-main { order: -1; }            /* editor + results first, schema explorer after */
+  .schema-panel { max-height: 300px !important; }
+}
+
+/* Topic filter chips (had no styling at all) */
+.pg-topic-bar { display: flex; flex-wrap: wrap; gap: 8px; }
+.pg-topic-btn {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  padding: 7px 14px;
+  border-radius: var(--radius-full);
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+.pg-topic-btn:hover, .pg-topic-btn.active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+/* --- 3. Tablet & below (≤ 900px): sidebar becomes a drawer --------------- */
+@media (max-width: 900px) {
+  :root { --sidebar-width: min(320px, 86vw); }
+
+  .sidebar {
+    transform: translateX(-100%);
+    height: 100vh;
+    height: 100dvh;
+    box-shadow: var(--shadow-lg);
+    overscroll-behavior: contain;
+    padding-bottom: env(safe-area-inset-bottom);
+    visibility: hidden;                 /* keeps links out of the tab order while closed */
+    transition: transform var(--transition-normal), visibility 0s linear 0.25s;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform var(--transition-normal), visibility 0s;
+  }
+  .sidebar-nav { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+  .sidebar-close-btn { display: flex; width: 44px; height: 44px; align-items: center; justify-content: center; }
+  .sidebar-backdrop { height: 100vh; height: 100dvh; }
+  .main-wrapper { margin-left: 0; }
+
+  .mobile-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    flex: none;
+  }
+
+  /* Touch-friendly targets everywhere */
+  .nav-link { min-height: 48px; }
+  .btn-primary, .btn-outline, .theme-toggle-btn, .pg-tab-btn, .w3-tab-btn, .snippet-chip,
+  .run-in-playground-badge, .btn-copy-code, .w3-btn-action, .w3-btn-load { min-height: 40px; }
+  .topic-status-check { min-height: 44px; }
+  .qa-item > summary { min-height: 48px; }
+  .quiz-opt { min-height: 48px; }
+
+  /* iOS zooms the page when an input is focused with font-size < 16px */
+  input[type="text"], input[type="search"], textarea, select,
+  .search-modal-input, .glossary-search, .sql-textarea { font-size: 16px; }
+
+  .search-modal { width: min(94vw, 640px); }
+
+  .sidebar-nav > * { flex-shrink: 0; }
+  .nav-link-left { min-width: 0; flex: 1; }
+  .nav-badge { white-space: nowrap; flex: none; margin-left: 8px; }
+
+  /* Floating scroll buttons only appear once you've scrolled, and never over the drawer */
+  .floating-scroll-controls {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity var(--transition-normal), transform var(--transition-normal);
+  }
+  html.scrolled .floating-scroll-controls { opacity: 1; pointer-events: auto; transform: none; }
+  html.nav-open .floating-scroll-controls { display: none; }
+  #btnScrollBottom { display: none; }             /* flicking is faster than a "jump to bottom" button on touch */
+
+  .content-area { padding: 22px 20px; }
+  .compare-grid, .plan-grid { grid-template-columns: 1fr 1fr; }
+  .img-grid-3col { grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); }
+
+  /* Diagrams keep a readable minimum size and scroll sideways if needed */
+  .svg-figure svg {
+    min-width: min(var(--svg-w, 620px), max(480px, calc(var(--svg-w, 620px) * 0.8)));
+  }
+  .scroll-hint { display: none; }
+  .scroll-hint.is-needed { display: block; }
+}
+
+/* --- 4. Phone (≤ 640px) --------------------------------------------------- */
+@media (max-width: 640px) {
+  :root { --header-height: 56px; }
+
+  html { font-size: 15.5px; }
+
+  /* Topbar: [☰] [current page …………] [🔍] [⚡ SQL] */
+  .topbar { padding: 0 10px; gap: 8px; height: var(--header-height); }
+  .topbar-left { flex: 1 1 auto; min-width: 0; gap: 8px; }
+  .topbar-right { flex: none; gap: 8px; }
+  .breadcrumb { flex: 1 1 auto; min-width: 0; font-size: 0.86rem; }
+  .breadcrumb > span:first-child,
+  .breadcrumb > .breadcrumb-separator { display: none; }
+  .breadcrumb-current {
+    display: block;
+    max-width: none;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .bc-section { display: none; }
+
+  /* The search box collapses to a single 44px icon button */
+  .search-wrapper {
+    width: 44px;
+    height: 44px;
+    flex: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    background: var(--bg-secondary);
+    cursor: pointer;
+  }
+  .search-wrapper .search-input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  .search-wrapper .search-input:focus { width: 100%; }
+  .search-wrapper .shortcut-badge { display: none; }
+  .search-wrapper .search-icon { position: static; transform: none; font-size: 18px; }
+
+  #btnLaunchPlayground { height: 44px; padding: 0 12px; justify-content: center; white-space: nowrap; }
+  #btnLaunchPlayground::after { content: "⚡ SQL"; }
+
+  /* Page padding & headings */
+  .content-area { padding: 14px 10px 90px; }        /* bottom room for the floating buttons */
+  .unit-banner { padding: 18px 14px; margin-bottom: 16px; border-radius: var(--radius-md); }
+  .unit-title { font-size: 1.45rem; line-height: 1.22; overflow-wrap: break-word; }
+  .unit-subtitle { font-size: 0.9rem; }
+  .unit-desc { font-size: 0.88rem; }
+  /* The official syllabus paragraph is long; show 3 lines, expand on tap */
+  .unit-desc:not(.is-expanded) {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .desc-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin: 2px 0 10px;
+    padding: 8px 0;
+    min-height: 40px;
+    background: none;
+    border: 0;
+    color: var(--accent-secondary);
+    font: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .unit-meta { gap: 8px 14px; }
+  .unit-meta-item { font-size: 0.8rem; }
+
+  .topic-card { padding: 16px 12px; margin-bottom: 16px; border-radius: var(--radius-md); }
+  .topic-title { font-size: 1.1rem; line-height: 1.3; }
+  .topic-summary { font-size: 0.84rem; }
+  .content-block h3 { font-size: 1.05rem; }
+  .content-block h4 { font-size: 0.98rem; }
+
+  /* Every multi-column layout becomes a single column */
+  .grid-2col, .grid-3col, .grid-4col,
+  .compare-grid, .plan-grid, .glossary-grid,
+  .img-grid-2col, .img-grid-3col,
+  .unit-cards-grid, .books-grid { grid-template-columns: 1fr; gap: 12px; }
+
+  /* Callout boxes: tighter, still readable */
+  .learn-box, .definition-box, .callout-box { padding: 13px 12px 13px 14px; margin: 14px 0; }
+  .learn-box > .learn-title { font-size: 0.9rem; }
+  .worked-example, .exam-corner, .quiz-block, .unit-intro-card { padding: 14px 12px; }
+  .we-question, .we-answer { font-size: 0.86rem; padding: 10px 11px; }
+  .step-list > li { padding-left: 34px; font-size: 0.9rem; }
+  .step-list > li::before { width: 24px; height: 24px; font-size: 0.75rem; }
+  .qa-answer { padding: 12px 12px 14px; }
+  /* Question rows: marker pinned left, marks badge trails the text (flex-wrap left the marker stranded) */
+  .qa-item > summary { display: block; position: relative; padding: 12px 12px 12px 34px; font-size: 0.88rem; line-height: 1.5; }
+  .qa-item > summary::before { position: absolute; left: 14px; top: 13px; }
+  .qa-item > summary .qa-marks { display: inline-block; margin: 0 0 0 8px; white-space: nowrap; vertical-align: baseline; }
+  .quiz-q { padding: 13px 12px; }
+  .quiz-opt { padding: 10px 12px; font-size: 0.88rem; }
+  .mnemonic-phrase { font-size: 0.92rem; padding: 6px 10px; display: block; }
+  .formula-strip { font-size: 0.82rem; padding: 11px 10px; text-align: left; }
+
+  /* Tables: compact cells, minimum widths so columns don't crush into slivers */
+  .syllabus-table { font-size: 0.8rem; }
+  .syllabus-table th, .syllabus-table td { padding: 9px 10px; }
+  .syllabus-table.cols-3 { min-width: 460px; }
+  .syllabus-table.cols-4 { min-width: 580px; }
+  .syllabus-table.cols-5 { min-width: 700px; }
+  .syllabus-table.cols-6 { min-width: 820px; }
+  /* Tiny inline tables that live inside cards: shrink rather than scroll */
+  .compare-card .syllabus-table, .learn-box .syllabus-table { min-width: 0; font-size: 0.76rem; }
+
+  /* Figures */
+  .note-figure { padding: 10px; margin: 14px 0; }
+  .note-img { max-height: 340px; padding: 4px; }
+  .note-img:hover { transform: none; }
+  .svg-figure { padding: 12px 8px 8px; margin: 14px 0; border-radius: var(--radius-md); }
+  .figure-caption { display: block; text-align: left; font-size: 0.78rem; line-height: 1.5; font-weight: 500; }
+  .figure-caption::before { content: none; }
+  .svg-figure .figure-caption { min-width: 0; position: sticky; left: 0; }
+
+  /* Code */
+  .code-block { margin: 12px 0; }
+  .code-block .code-header { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 8px 10px; }
+  .code-block .code-content { padding: 10px 12px; }
+  .code-block .code-content pre { font-size: 0.76rem; line-height: 1.6; }
+  .run-in-playground-badge { padding: 6px 12px; font-size: 0.74rem; }
+
+  /* Glossary & study guide */
+  .glossary-toolbar { gap: 8px; }
+  .glossary-search { flex: 1 1 100%; }
+  .glossary-card { padding: 12px 13px; }
+
+  /* Search modal fills the top of the screen like a native sheet */
+  .modal-backdrop { align-items: flex-start; }
+  .search-modal { width: 100%; max-width: none; margin: 0; border-radius: 0 0 var(--radius-lg) var(--radius-lg); max-height: 85vh; max-height: 85dvh; display: flex; flex-direction: column; }
+  .search-results-list { overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+  .search-result-item { padding: 12px 14px; }
+
+  /* Floating button: just "back to top", clear of the notch / home bar */
+  .floating-scroll-controls {
+    right: 12px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+  }
+  .btn-scroll-action { width: 44px; height: 44px; }
+
+  /* Compact drawer so Glossary / Study Guide are reachable without hunting */
+  .sidebar-header { padding: 12px 14px; }
+  .logo-icon-box { width: 36px; height: 36px; font-size: 18px; }
+  .brand-title { font-size: 1.05rem; }
+  .brand-subtitle { font-size: 0.66rem; }
+  .sidebar-progress { padding: 9px 16px; }
+  .progress-header { margin-bottom: 6px; font-size: 0.76rem; }
+  .sidebar-nav { padding: 6px 10px; gap: 2px; }
+  .nav-section-title { padding: 8px 10px 2px; }
+  .nav-link { padding: 8px 12px; font-size: 0.88rem; }
+  .nav-link.nav-playground { margin-top: 2px; }
+  .sidebar-footer { padding: 10px 16px calc(10px + env(safe-area-inset-bottom)); }
+  .nav-link { min-height: 44px; }
+  .nav-section-title { padding: 6px 10px 0; }
+
+  /* Banner: the syllabus paragraph toggle sits close to the content below */
+  .unit-desc { margin-bottom: 0; }
+  .desc-toggle { margin-bottom: 4px; }
+
+  /* Search sheet hugs the top edge and leaves room for the on-screen keyboard */
+  .modal-backdrop { padding-top: 0; }
+  .search-modal { max-height: 72vh; max-height: 72dvh; }
+
+  /* Playground */
+  .pg-topic-bar { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; scrollbar-width: none; }
+  .pg-topic-bar::-webkit-scrollbar { display: none; }
+  .pg-topic-btn { flex: none; min-height: 40px; }
+  .playground-layout-wide { gap: 12px; margin-bottom: 16px; }
+  .editor-toolbar { padding: 8px 10px; }
+  .sql-textarea { min-height: 150px; padding: 12px; }
+  .results-card { min-width: 0; }
+  .results-header, .results-meta { flex-wrap: wrap; row-gap: 8px; min-width: 0; }
+  .editor-toolbar select, .form-select, .results-card input[type="text"], .results-card input:not([type]) { min-height: 44px; }
+  .topic-status-check input[type="checkbox"] { width: 20px; height: 20px; }
+  .results-table th, .results-table td { padding: 9px 10px; font-size: 0.8rem; }
+  .w3-grid-layout { gap: 12px; }
+  .w3-card { padding: 12px; }
+  .challenge-box { padding: 14px 12px; }
+  .challenge-actions { flex-wrap: wrap; }
+}
+
+/* --- 5. Very small phones (≤ 380px) --------------------------------------- */
+@media (max-width: 380px) {
+  html { font-size: 15px; }
+  .content-area { padding-left: 8px; padding-right: 8px; }
+  .topic-card { padding: 14px 10px; }
+  .unit-title { font-size: 1.3rem; }
+  .topbar { padding: 0 8px; gap: 6px; }
+  #btnLaunchPlayground { padding: 0 9px; font-size: 0.8rem; }
+  .btn-scroll-action { width: 38px; height: 38px; }
+}
+
+/* --- 6. Landscape phones: short viewport, keep chrome small --------------- */
+@media (max-height: 480px) and (orientation: landscape) {
+  :root { --header-height: 48px; }
+  .topbar { height: 48px; }
+  .search-modal { max-height: 92vh; }
+}
+
+/* --- 7. Scroll lock while the drawer / lightbox is open -------------------- */
+html.nav-open, html.nav-open body,
+html.lightbox-open, html.lightbox-open body { overflow: hidden; }
+
+/* --- 7b. Figure lightbox (tap a diagram or image to enlarge on phones) ------ */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 300;                       /* above sidebar (100), topbar (90), modals */
+  display: flex;
+  flex-direction: column;
+  background: rgba(5, 8, 15, 0.96);
+  padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom);
+}
+.lightbox[hidden] { display: none; }
+.lightbox-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 12px;
+  color: #cbd5e1;
+  font-size: 0.78rem;
+}
+.lightbox-close {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.lightbox-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y pinch-zoom;
+  display: flex;
+  padding: 8px 12px;
+}
+.lightbox-body > * { margin: auto; flex: none; }          /* centred when small, pannable when large */
+.lightbox-body svg { background: var(--bg-secondary); border-radius: var(--radius-md); padding: 12px; }
+.lightbox-body svg text { font-family: var(--font-body); fill: var(--text-primary); }
+.lightbox-body svg .svg-muted { fill: var(--text-secondary); }
+.lightbox-body svg .svg-stroke { stroke: var(--text-secondary); }
+.lightbox-body svg .svg-panel { fill: var(--bg-tertiary); stroke: var(--border-color); }
+.lightbox-body svg .svg-line { stroke: var(--text-muted); }
+.lightbox-caption {
+  flex: none;
+  max-height: 22vh;
+  overflow-y: auto;
+  padding: 10px 14px 14px;
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+@media (max-width: 900px) {
+  .svg-figure svg, .note-figure .note-img { cursor: zoom-in; }
+}
+
+/* --- 8. Respect users who ask for less motion ----------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

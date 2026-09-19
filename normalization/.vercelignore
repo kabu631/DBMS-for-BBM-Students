@@ -1,0 +1,8 @@
+server.js
+start.bat
+normalization.py
+generate_word_document.py
+format_template_backup.docx
+.agents
+*.log
+__pycache__

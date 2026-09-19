@@ -1,0 +1,19 @@
+# OS & Editor Metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Environment and Temporary Files
+*.tmp
+*.bak
+scratch/
+.agents/
+
+# Node & Python caches
+node_modules/
+npm-debug.log*
+__pycache__/
+*.py[cod]
+*$py.class
