@@ -13,40 +13,76 @@ const SYLLABUS_DATA = {
     "labObjective": "The laboratory work includes writing SQL statements to create databases and tables, inserting and deleting data, updating data, and writing select queries.",
     "readings": [
       {
+        "id": "book-1",
         "title": "Fundamentals of Database Systems",
         "edition": "7th Edition",
         "authors": "Ramez Elmasri, Shamkant B. Navathe",
-        "publisher": "Pearson Education"
+        "publisher": "Pearson Education",
+        "fileName": "Fundamentals of Database Systems (Book 1).pdf",
+        "fileSize": "4.3 MB",
+        "bookNumber": "Book 1",
+        "tag": "Primary Syllabus Textbook",
+        "color": "#3b82f6"
       },
       {
+        "id": "book-2",
         "title": "Database System Concepts",
         "edition": "6th Edition",
         "authors": "Avi Silberschatz, Henry F. Korth, S. Sudarshan",
-        "publisher": "McGraw-Hill"
+        "publisher": "McGraw-Hill",
+        "fileName": "Database System Concepts (Book 2).pdf",
+        "fileSize": "16.5 MB",
+        "bookNumber": "Book 2",
+        "tag": "Standard Theory & SQL",
+        "color": "#6366f1"
       },
       {
+        "id": "book-3",
         "title": "Database Management Systems",
         "edition": "3rd Edition",
         "authors": "Raghu Ramakrishnan, Johannes Gehrke",
-        "publisher": "McGraw-Hill"
+        "publisher": "McGraw-Hill",
+        "fileName": "Database Management Systems (Book 3).pdf",
+        "fileSize": "12.1 MB",
+        "bookNumber": "Book 3",
+        "tag": "Relational Storage & SQL",
+        "color": "#10b981"
       },
       {
+        "id": "book-4",
         "title": "Principles of Distributed Database Systems",
         "edition": "4th Edition",
         "authors": "M. Tamer Özsu, Patrick Valduriez",
-        "publisher": "Springer (2020)"
+        "publisher": "Springer (2020)",
+        "fileName": "Principles of Distributed Database Systems (Book 4).pdf",
+        "fileSize": "3.7 MB",
+        "bookNumber": "Book 4",
+        "tag": "Distributed Architecture",
+        "color": "#f59e0b"
       },
       {
+        "id": "book-5",
         "title": "A First Course in Database Systems",
         "edition": "3rd Edition",
         "authors": "Jeffrey D. Ullman, Jennifer Widom",
-        "publisher": "Pearson Education Limited"
+        "publisher": "Pearson Education Limited",
+        "fileName": "A First Course in Database Systems (Book 5).pdf",
+        "fileSize": "11.7 MB",
+        "bookNumber": "Book 5",
+        "tag": "Stanford Relational Foundation",
+        "color": "#8b5cf6"
       },
       {
+        "id": "book-6",
         "title": "NoSQL for Dummies",
         "edition": "1st Edition",
         "authors": "Adam Fowler",
-        "publisher": "John Wiley & Sons, Inc."
+        "publisher": "John Wiley & Sons, Inc.",
+        "fileName": "NoSQL-for-dummies (Book 6).pdf",
+        "fileSize": "3.3 MB",
+        "bookNumber": "Book 6",
+        "tag": "Modern NoSQL Reference",
+        "color": "#ec4899"
       }
     ]
   },

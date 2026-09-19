@@ -227,6 +227,13 @@ class AppController {
     } else if (hash === "overview") {
       this.renderOverview();
       this.updateBreadcrumb("Course Information", "Overview & Textbooks");
+    } else if (hash === "books" || hash === "textbooks") {
+      this.renderOverview();
+      this.updateBreadcrumb("Course Information", "Downloadable Reference Books");
+      setTimeout(() => {
+        const booksEl = document.getElementById("recommendedBooksSection");
+        if (booksEl) booksEl.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 100);
     } else if (hash === "glossary") {
       this.renderGlossary();
       this.updateBreadcrumb("Revision", "Glossary of Terms");
@@ -500,16 +507,50 @@ class AppController {
       </div>
     `).join("");
 
-    const refBooks = readings.map(ref => `
-      <div class="book-card">
-        <div class="book-cover">📚</div>
-        <div class="book-info">
-          <div class="book-title">${ref.title}</div>
-          <div class="book-author">${ref.authors || ref.author || ''} ${ref.edition ? `(${ref.edition})` : ''}</div>
-          <div class="book-publisher">${ref.publisher || ''}</div>
+    const refBooks = readings.map(ref => {
+      const fileUrl = ref.fileName ? `Books/${encodeURIComponent(ref.fileName)}` : '';
+      return `
+        <div class="book-card-v2" style="--book-theme-color: ${ref.color || '#3b82f6'};">
+          <div class="book-card-top">
+            <div class="book-cover-v2">
+              <span class="book-icon">📕</span>
+              <span class="book-num-badge">${ref.bookNumber || 'PDF'}</span>
+            </div>
+            <div class="book-details">
+              <div class="book-tag-row">
+                <span class="book-tag">${ref.tag || 'Reference Book'}</span>
+                ${ref.fileSize ? `<span class="book-size-badge">📦 ${ref.fileSize}</span>` : ''}
+              </div>
+              <h4 class="book-title-v2">${ref.title}</h4>
+              <div class="book-meta-line">
+                <span class="meta-label">Edition:</span>
+                <span class="meta-val">${ref.edition || 'Standard Edition'}</span>
+              </div>
+              <div class="book-meta-line">
+                <span class="meta-label">Authors:</span>
+                <span class="meta-val">${ref.authors || ref.author || ''}</span>
+              </div>
+              <div class="book-publisher-v2">
+                <span class="meta-label">Publisher:</span> ${ref.publisher || ''}
+              </div>
+            </div>
+          </div>
+          ${fileUrl ? `
+            <div class="book-card-actions">
+              <a href="${fileUrl}" download="${ref.fileName}" class="btn-book-download" title="Download ${ref.title} PDF directly">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                <span>Download PDF</span>
+                <span class="btn-size-chip">${ref.fileSize || ''}</span>
+              </a>
+              <a href="${fileUrl}" target="_blank" rel="noopener" class="btn-book-view" title="Read ${ref.title} in browser">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                <span>Read Online</span>
+              </a>
+            </div>
+          ` : ''}
         </div>
-      </div>
-    `).join("");
+      `;
+    }).join("");
 
     container.innerHTML = `
       <div class="unit-banner">
@@ -537,14 +578,22 @@ class AppController {
         ${unitCards}
       </div>
 
-      <div class="topic-card">
-        <div class="topic-header">
+      <div class="topic-card" id="recommendedBooksSection">
+        <div class="topic-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
           <div>
+            <div style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:var(--accent-blue); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">
+              <span>📥 Digital Library</span>
+              <span>•</span>
+              <span>6 Prescribed Textbooks Available Offline</span>
+            </div>
             <h3 class="topic-title">📖 Recommended Standard Reference Textbooks</h3>
-            <div class="topic-summary">Prescribed reference books for in-depth theoretical, relational, and mathematical foundations.</div>
+            <div class="topic-summary">Prescribed reference books for in-depth theoretical, relational, and mathematical foundations. Download the complete PDF versions or read online in your browser.</div>
+          </div>
+          <div class="books-summary-badge">
+            <span>6 Complete PDF Books</span>
           </div>
         </div>
-        <div class="books-grid">
+        <div class="books-grid-v2">
           ${refBooks}
         </div>
       </div>
@@ -1673,10 +1722,19 @@ class AppController {
 
     const isNormMatch = q && ("normalization practice closures candidate keys 1nf 2nf 3nf decomposition").includes(q);
 
-    if (matches.length === 0 && !isNormMatch) {
+    const bookMatches = q ? (SYLLABUS_DATA.courseInfo?.readings || []).filter(b => {
+      return (
+        b.title.toLowerCase().includes(q) ||
+        b.authors.toLowerCase().includes(q) ||
+        (b.tag && b.tag.toLowerCase().includes(q)) ||
+        ("download book books textbook textbooks pdf").includes(q)
+      );
+    }) : [];
+
+    if (matches.length === 0 && !isNormMatch && bookMatches.length === 0) {
       resultsContainer.innerHTML = `
         <div style="text-align:center; padding: 24px; color:var(--text-muted);">
-          No matching topics found for "<em>${query}</em>"
+          No matching topics or textbooks found for "<em>${query}</em>"
         </div>
       `;
       return;
@@ -1691,6 +1749,18 @@ class AppController {
           <div style="font-size:0.8rem; color:var(--text-secondary);">60 Solved Problems: Closures, Candidate Keys, 1NF, 2NF & 3NF Decompositions.</div>
         </div>
       `;
+    }
+
+    if (bookMatches.length > 0) {
+      bookMatches.slice(0, 3).forEach(b => {
+        html += `
+          <div class="search-result-item search-result-book" onclick="app.closeSearchModal(); window.location.hash='#books';">
+            <div class="search-result-unit" style="color:#10b981;">Downloadable Textbook • ${b.fileSize}</div>
+            <div class="search-result-title">📕 ${b.title} (${b.edition})</div>
+            <div style="font-size:0.8rem; color:var(--text-secondary);">${b.authors} • ${b.publisher}</div>
+          </div>
+        `;
+      });
     }
 
     html += matches.slice(0, 8).map(m => `

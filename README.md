@@ -45,6 +45,15 @@ The application is hosted for free on GitHub Pages:
 - **Quick Keyboard Shortcuts:** `Ctrl + K` to search topics, `Esc` to dismiss modals.
 - **Sleek Themes:** Fully responsive design with automatic Dark Midnight and Clean Light modes.
 
+### 5. 📚 Downloadable Standard Textbooks Library (Free Offline PDFs)
+The application includes complete, full-text downloadable reference textbooks for offline reading:
+- **Book 1:** *Fundamentals of Database Systems (7th Ed.)* — Ramez Elmasri, Shamkant Navathe (4.3 MB)
+- **Book 2:** *Database System Concepts (6th Ed.)* — Avi Silberschatz, Henry Korth, S. Sudarshan (16.5 MB)
+- **Book 3:** *Database Management Systems (3rd Ed.)* — Raghu Ramakrishnan, Johannes Gehrke (12.1 MB)
+- **Book 4:** *Principles of Distributed Database Systems (4th Ed.)* — M. Tamer Özsu, Patrick Valduriez (3.7 MB)
+- **Book 5:** *A First Course in Database Systems (3rd Ed.)* — Jeffrey D. Ullman, Jennifer Widom (11.7 MB)
+- **Book 6:** *NoSQL for Dummies (1st Ed.)* — Adam Fowler (3.3 MB)
+
 ---
 
 ## 💻 Running Locally
@@ -65,7 +74,7 @@ This project requires **zero build steps** and **no npm dependencies**. It runs 
      ```bash
      node server.js
      ```
-   - Open [http://localhost:3000](http://localhost:3000) in your browser.
+   - Open [http://localhost:8080](http://localhost:8080) in your browser.
 
 ---
 
@@ -75,6 +84,7 @@ This project requires **zero build steps** and **no npm dependencies**. It runs 
 .
 ├── index.html                      # Main single-page application entry point
 ├── server.js                       # Lightweight local HTTP server
+├── Books/                          # 6 Full-text downloadable standard textbook PDFs
 ├── css/
 │   ├── style.css                   # Core design system (dark/light themes, typography, layout)
 │   ├── learn.css                   # Pedagogical styling (boxes, definitions, exam corners)
