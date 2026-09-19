@@ -507,47 +507,60 @@ class AppController {
       </div>
     `).join("");
 
+    const BOOK_MAP = {
+      "Fundamentals of Database Systems": {
+        file: "Fundamentals of Database Systems (Book 1).pdf",
+        size: "4.3 MB"
+      },
+      "Database System Concepts": {
+        file: "Database System Concepts (Book 2).pdf",
+        size: "16.5 MB"
+      },
+      "Database Management Systems": {
+        file: "Database Management Systems (Book 3).pdf",
+        size: "12.1 MB"
+      },
+      "Principles of Distributed Database Systems": {
+        file: "Principles of Distributed Database Systems (Book 4).pdf",
+        size: "3.7 MB"
+      },
+      "A First Course in Database Systems": {
+        file: "A First Course in Database Systems (Book 5).pdf",
+        size: "11.7 MB"
+      },
+      "NoSQL for Dummies": {
+        file: "NoSQL-for-dummies (Book 6).pdf",
+        size: "3.3 MB"
+      }
+    };
+
     const refBooks = readings.map(ref => {
-      const fileUrl = ref.fileName ? `Books/${encodeURIComponent(ref.fileName)}` : '';
+      const mapped = BOOK_MAP[ref.title] || {};
+      const fileName = ref.fileName || mapped.file || '';
+      const fileSize = ref.fileSize || mapped.size || 'PDF';
+      const fileUrl = fileName ? `Books/${encodeURIComponent(fileName)}` : '';
+
       return `
-        <div class="book-card-v2" style="--book-theme-color: ${ref.color || '#3b82f6'};">
-          <div class="book-card-top">
-            <div class="book-cover-v2">
-              <span class="book-icon">📕</span>
-              <span class="book-num-badge">${ref.bookNumber || 'PDF'}</span>
-            </div>
-            <div class="book-details">
-              <div class="book-tag-row">
-                <span class="book-tag">${ref.tag || 'Reference Book'}</span>
-                ${ref.fileSize ? `<span class="book-size-badge">📦 ${ref.fileSize}</span>` : ''}
+        <div class="book-card">
+          <div class="book-cover">📚</div>
+          <div class="book-info">
+            <div class="book-title">${ref.title}</div>
+            <div class="book-author">${ref.authors || ref.author || ''} ${ref.edition ? `(${ref.edition})` : ''}</div>
+            <div class="book-publisher">${ref.publisher || ''}</div>
+            ${fileUrl ? `
+              <div class="book-download-actions">
+                <a href="${fileUrl}" download="${fileName}" class="btn-download-pdf" title="Download ${ref.title} PDF (${fileSize})">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  <span>Download PDF</span>
+                  <span class="btn-size-tag">${fileSize}</span>
+                </a>
+                <a href="${fileUrl}" target="_blank" rel="noopener" class="btn-view-pdf" title="Read ${ref.title} online in browser">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                  <span>Read Online</span>
+                </a>
               </div>
-              <h4 class="book-title-v2">${ref.title}</h4>
-              <div class="book-meta-line">
-                <span class="meta-label">Edition:</span>
-                <span class="meta-val">${ref.edition || 'Standard Edition'}</span>
-              </div>
-              <div class="book-meta-line">
-                <span class="meta-label">Authors:</span>
-                <span class="meta-val">${ref.authors || ref.author || ''}</span>
-              </div>
-              <div class="book-publisher-v2">
-                <span class="meta-label">Publisher:</span> ${ref.publisher || ''}
-              </div>
-            </div>
+            ` : ''}
           </div>
-          ${fileUrl ? `
-            <div class="book-card-actions">
-              <a href="${fileUrl}" download="${ref.fileName}" class="btn-book-download" title="Download ${ref.title} PDF directly">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                <span>Download PDF</span>
-                <span class="btn-size-chip">${ref.fileSize || ''}</span>
-              </a>
-              <a href="${fileUrl}" target="_blank" rel="noopener" class="btn-book-view" title="Read ${ref.title} in browser">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                <span>Read Online</span>
-              </a>
-            </div>
-          ` : ''}
         </div>
       `;
     }).join("");
@@ -581,19 +594,14 @@ class AppController {
       <div class="topic-card" id="recommendedBooksSection">
         <div class="topic-header" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:12px;">
           <div>
-            <div style="display:inline-flex; align-items:center; gap:6px; font-size:0.75rem; font-weight:700; color:var(--accent-blue); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:4px;">
-              <span>📥 Digital Library</span>
-              <span>•</span>
-              <span>6 Prescribed Textbooks Available Offline</span>
-            </div>
             <h3 class="topic-title">📖 Recommended Standard Reference Textbooks</h3>
-            <div class="topic-summary">Prescribed reference books for in-depth theoretical, relational, and mathematical foundations. Download the complete PDF versions or read online in your browser.</div>
+            <div class="topic-summary">Prescribed reference books for in-depth theoretical, relational, and mathematical foundations. Direct download links and online reading available below.</div>
           </div>
           <div class="books-summary-badge">
-            <span>6 Complete PDF Books</span>
+            <span>6 Downloadable PDFs</span>
           </div>
         </div>
-        <div class="books-grid-v2">
+        <div class="books-grid">
           ${refBooks}
         </div>
       </div>

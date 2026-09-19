@@ -18,12 +18,12 @@ const ROOT = path.join(__dirname, "..");
 const indexHtml = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
 
 // ---- 1. Check every asset index.html references actually exists -----------
-const refs = [...indexHtml.matchAll(/(?:src|href)="((?!https?:|data:|#)[^"]+)"/g)].map(m => m[1]);
+const refs = [...indexHtml.matchAll(/(?:src|href)="((?!https?:|data:|#)[^"]+)"/g)].map(m => m[1].split('?')[0]);
 const missingRefs = refs.filter(r => !fs.existsSync(path.join(ROOT, r)));
 
 // ---- 2. Load the data files in index.html order --------------------------
 const scriptOrder = [...indexHtml.matchAll(/<script src="((?:js|css)\/[^"]+)"><\/script>/g)]
-  .map(m => m[1])
+  .map(m => m[1].split('?')[0])
   .filter(p => p !== "js/sql-playground.js" && p !== "js/app.js");
 
 const sandbox = { console };
