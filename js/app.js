@@ -82,6 +82,15 @@ class AppController {
     this.bindEvents();
     this.initLightbox();
     
+    // Check saved sidebar state on desktop
+    try {
+      if (window.innerWidth > 900 && localStorage.getItem("dbms_sidebar_collapsed") === "true") {
+        document.documentElement.classList.add("sidebar-collapsed");
+        document.body.classList.add("sidebar-collapsed");
+        if (this.updateSidebarToggleUI) this.updateSidebarToggleUI(true);
+      }
+    } catch (e) {}
+
     // Handle initial routing immediately
     this.handleRoute();
     this.updateProgressUI();
@@ -114,18 +123,53 @@ class AppController {
       themeBtn.addEventListener("click", () => this.toggleTheme());
     }
 
-    // Mobile menu toggle & backdrop
+    // Sidebar toggle, mobile drawer & backdrop
     const mobileBtn = document.getElementById("mobileMenuBtn");
     const sidebar = document.getElementById("sidebar");
     const sidebarBackdrop = document.getElementById("sidebarBackdrop");
     const closeSidebarBtn = document.getElementById("closeSidebarBtn");
 
-    // Keep a reference so route changes (handleRoute) can close the drawer too.
-    // Previously navigation closed the sidebar but left the dark backdrop up.
+    this.updateSidebarToggleUI = (isCollapsed) => {
+      if (mobileBtn) {
+        mobileBtn.setAttribute("aria-expanded", isCollapsed ? "false" : "true");
+        mobileBtn.setAttribute("title", isCollapsed ? "Show Sidebar (Ctrl+B)" : "Hide Sidebar (Ctrl+B)");
+      }
+    };
+
+    this.toggleSidebar = () => {
+      if (window.innerWidth <= 900) {
+        if (sidebar && sidebar.classList.contains("open")) {
+          this.closeMobileSidebar();
+        } else {
+          this.openMobileSidebar();
+        }
+      } else {
+        const isCollapsed = document.documentElement.classList.toggle("sidebar-collapsed");
+        document.body.classList.toggle("sidebar-collapsed", isCollapsed);
+        try {
+          localStorage.setItem("dbms_sidebar_collapsed", isCollapsed ? "true" : "false");
+        } catch (e) {}
+        this.updateSidebarToggleUI(isCollapsed);
+      }
+    };
+
+    this.closeSidebar = () => {
+      if (window.innerWidth <= 900) {
+        this.closeMobileSidebar();
+      } else {
+        document.documentElement.classList.add("sidebar-collapsed");
+        document.body.classList.add("sidebar-collapsed");
+        try {
+          localStorage.setItem("dbms_sidebar_collapsed", "true");
+        } catch (e) {}
+        this.updateSidebarToggleUI(true);
+      }
+    };
+
     this.openMobileSidebar = () => {
       if (sidebar) sidebar.classList.add("open");
       if (sidebarBackdrop) sidebarBackdrop.classList.add("active");
-      document.documentElement.classList.add("nav-open");   // lock background scroll
+      document.documentElement.classList.add("nav-open");
       if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "true");
     };
 
@@ -136,19 +180,45 @@ class AppController {
       if (mobileBtn) mobileBtn.setAttribute("aria-expanded", "false");
     };
 
-    const openMobileSidebar = this.openMobileSidebar;
-    const closeMobileSidebar = this.closeMobileSidebar;
+    // Keyboard shortcut: Ctrl + B or Cmd + B to toggle sidebar
+    document.addEventListener("keydown", (e) => {
+      if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable)) {
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+        e.preventDefault();
+        this.toggleSidebar();
+      }
+    });
 
-    // Leaving the mobile layout (rotate / resize) must never leave the drawer locked open
     window.addEventListener("resize", () => {
-      if (window.innerWidth > 900) closeMobileSidebar();
+      if (window.innerWidth <= 900) {
+        document.documentElement.classList.remove("sidebar-collapsed");
+        document.body.classList.remove("sidebar-collapsed");
+        this.closeMobileSidebar();
+      } else {
+        const wasCollapsed = localStorage.getItem("dbms_sidebar_collapsed") === "true";
+        if (wasCollapsed) {
+          document.documentElement.classList.add("sidebar-collapsed");
+          document.body.classList.add("sidebar-collapsed");
+          this.updateSidebarToggleUI(true);
+        } else {
+          this.updateSidebarToggleUI(false);
+        }
+      }
       this.scheduleScrollHints();
     });
     window.addEventListener("orientationchange", () => this.scheduleScrollHints());
 
-    if (mobileBtn) mobileBtn.addEventListener("click", openMobileSidebar);
-    if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", closeMobileSidebar);
-    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", closeMobileSidebar);
+    if (mobileBtn) mobileBtn.addEventListener("click", () => this.toggleSidebar());
+    if (sidebarBackdrop) sidebarBackdrop.addEventListener("click", () => this.closeMobileSidebar());
+    if (closeSidebarBtn) closeSidebarBtn.addEventListener("click", () => this.closeSidebar());
+
+    // Topbar theme toggle button
+    const topbarThemeBtn = document.getElementById("topbarThemeToggleBtn");
+    if (topbarThemeBtn) {
+      topbarThemeBtn.addEventListener("click", () => this.toggleTheme());
+    }
 
     // Search trigger & modal
     const searchTrigger = document.getElementById("searchTrigger");
@@ -1823,6 +1893,15 @@ class AppController {
         themeIcon.textContent = "🌙";
         themeText.textContent = "Dark Mode";
       }
+    }
+
+    const topbarThemeIcon = document.getElementById("topbarThemeIcon");
+    const topbarThemeBtn = document.getElementById("topbarThemeToggleBtn");
+    if (topbarThemeIcon) {
+      topbarThemeIcon.textContent = theme === "dark" ? "☀️" : "🌙";
+    }
+    if (topbarThemeBtn) {
+      topbarThemeBtn.setAttribute("title", theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode");
     }
 
     // Sync theme with embedded Normalization iframe if present
