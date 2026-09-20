@@ -542,9 +542,13 @@ class AppController {
 
       return `
         <div class="book-card">
-          <div class="book-cover">📚</div>
+          <a href="${fileUrl}" target="_blank" rel="noopener" class="book-cover-link" title="Open ${ref.title} PDF in new tab">
+            <div class="book-cover">📚</div>
+          </a>
           <div class="book-info">
-            <div class="book-title">${ref.title}</div>
+            <a href="${fileUrl}" target="_blank" rel="noopener" class="book-title-link" title="Read ${ref.title} PDF">
+              <div class="book-title">${ref.title}</div>
+            </a>
             <div class="book-author">${ref.authors || ref.author || ''} ${ref.edition ? `(${ref.edition})` : ''}</div>
             <div class="book-publisher">${ref.publisher || ''}</div>
             ${fileUrl ? `

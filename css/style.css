@@ -3143,6 +3143,18 @@ hr, .section-divider, .topic-divider {
   box-shadow: var(--shadow-sm);
 }
 
+.book-cover-link {
+  text-decoration: none;
+  display: block;
+  flex-shrink: 0;
+  transition: transform var(--transition-fast);
+}
+
+.book-cover-link:hover .book-cover {
+  border-color: var(--accent-primary);
+  transform: scale(1.04);
+}
+
 .book-info {
   display: flex;
   flex-direction: column;
@@ -3151,11 +3163,22 @@ hr, .section-divider, .topic-divider {
   flex: 1;
 }
 
+.book-title-link {
+  text-decoration: none;
+  color: inherit;
+  display: inline-block;
+}
+
+.book-title-link:hover .book-title {
+  color: var(--accent-primary);
+}
+
 .book-title {
   font-weight: 700;
   font-size: 0.98rem;
   color: var(--text-primary);
   line-height: 1.35;
+  transition: color var(--transition-fast);
 }
 
 .book-author {
