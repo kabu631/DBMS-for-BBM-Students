@@ -551,20 +551,24 @@ class AppController {
             </a>
             <div class="book-author">${ref.authors || ref.author || ''} ${ref.edition ? `(${ref.edition})` : ''}</div>
             <div class="book-publisher">${ref.publisher || ''}</div>
-            ${fileUrl ? `
-              <div class="book-download-actions">
-                <a href="${fileUrl}" download="${fileName}" class="btn-download-pdf" title="Download ${ref.title} PDF (${fileSize})">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                  <span>Download PDF</span>
-                  <span class="btn-size-tag">${fileSize}</span>
-                </a>
-                <a href="${fileUrl}" target="_blank" rel="noopener" class="btn-view-pdf" title="Read ${ref.title} online in browser">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                  <span>Read Online</span>
-                </a>
-              </div>
-            ` : ''}
           </div>
+          ${fileUrl ? `
+            <div class="book-icon-actions">
+              <a href="${fileUrl}" target="_blank" rel="noopener" class="btn-book-icon btn-icon-read" title="Read Online in Browser (${ref.title})" aria-label="Read Online">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                </svg>
+              </a>
+              <a href="${fileUrl}" download="${fileName}" class="btn-book-icon btn-icon-download" title="Download PDF (${fileSize})" aria-label="Download PDF">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+              </a>
+            </div>
+          ` : ''}
         </div>
       `;
     }).join("");

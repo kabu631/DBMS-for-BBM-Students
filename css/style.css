@@ -3197,65 +3197,67 @@ hr, .section-divider, .topic-divider {
   gap: 4px;
 }
 
-.book-download-actions {
+.book-icon-actions {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid var(--border-color);
-  flex-wrap: wrap;
-}
-
-.btn-download-pdf {
-  display: inline-flex;
-  align-items: center;
   gap: 6px;
-  padding: 7px 13px;
-  background: #2563eb;
-  color: #ffffff !important;
-  font-size: 0.82rem;
-  font-weight: 600;
+  flex-shrink: 0;
+  margin-left: auto;
+  align-self: center;
+}
+
+.btn-book-icon {
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius-md);
-  text-decoration: none;
-  transition: all var(--transition-fast);
-  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.3);
-}
-
-.btn-download-pdf:hover {
-  background: #1d4ed8;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.45);
-}
-
-.btn-size-tag {
-  font-size: 0.7rem;
-  background: rgba(255, 255, 255, 0.25);
-  padding: 1px 6px;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  color: #ffffff;
-}
-
-.btn-view-pdf {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 6px 11px;
+  justify-content: center;
   background: var(--bg-card);
-  color: var(--text-primary);
   border: 1px solid var(--border-color);
-  font-size: 0.8rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
+  color: var(--text-secondary);
   text-decoration: none;
   transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
 }
 
-.btn-view-pdf:hover {
-  background: rgba(59, 130, 246, 0.1);
-  border-color: #3b82f6;
-  color: #3b82f6;
+.btn-book-icon svg {
+  display: block;
+}
+
+.btn-book-icon:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-book-icon.btn-icon-read:hover {
+  color: #059669;
+  border-color: #059669;
+  background: rgba(5, 150, 105, 0.08);
+}
+
+.btn-book-icon.btn-icon-download:hover {
+  color: #2563eb;
+  border-color: #2563eb;
+  background: rgba(37, 99, 235, 0.08);
+}
+
+.btn-book-icon:active {
+  transform: translateY(0);
+}
+
+@media (max-width: 480px) {
+  .book-card {
+    flex-wrap: wrap;
+  }
+  .book-icon-actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px solid var(--border-color);
+  }
 }
 
 /* ==========================================================================
